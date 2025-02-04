@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="static/css/styles.css"/>
+
+</head>
+<body>
+<div class="container">
+    <div id="auth-section">
+        <h2>Authentication</h2>
+        <div id="login-form">
+            <input type="text" id="username" placeholder="Username"/>
+            <input type="password" id="password" placeholder="Password"/>
+            <button onclick="login()">Login</button>
+            <button onclick="register()">Register</button>
+        </div>
+    </div>
+
+    <div id="main-section" class="hidden">
+        <div class="header">
+            <h1>Library Management System</h1>
+            <button onclick="logout()">Logout</button>
+        </div>
+
+        <div class="video-games-section">
+            <h2>Add New Book</h2>
+            <div class="form-group">
+                <input type="text" id="video-game-name" placeholder="Name"/>
+                <input type="text" id="video-game-creator" placeholder="Creator"/>
+                <input type="text" id="video-game-year-published" placeholder="Year Published"/>
+                <input type="text" id="video-game-type" placeholder="type"/>
+                <button onclick="addBook()">Add Book</button>
+            </div>
+
+            <h2>All Video Games</h2>
+            <div id="video-games-list" class="video-games-grid"></div>
+
+            <h2>Loaned Books</h2>
+            <div id="loaned-video-games-list" class="video-games-grid"></div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
