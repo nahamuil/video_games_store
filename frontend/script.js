@@ -1,11 +1,10 @@
-// function to get all books from the API
 async function getVideoGames() {
     try {
         const response = await axios.get('http://127.0.0.1:5000/video_games');
         const videoGamesList = document.getElementById('video-games-list');
         videoGamesList.innerHTML = ''; // Clear existing list
 
-        response.data.video_games.forEach(book => {
+        response.data.video_games.forEach(video_game => {
             videoGamesList.innerHTML += `
                 <div class="video-game-card">
                     <h3>${video_game.title}</h3>
@@ -35,7 +34,7 @@ async function addBook() {
             year_published: year_published,
             types: types
         });
-        
+
         // Clear form fields
         document.getElementById('book-title').value = '';
         document.getElementById('book-author').value = '';
@@ -44,7 +43,7 @@ async function addBook() {
 
         // Refresh the books list
         getBooks();
-        
+
         alert('Book added successfully!');
     } catch (error) {
         console.error('Error adding book:', error);
