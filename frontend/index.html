@@ -1,49 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Library Management System</title>
-    <link rel="stylesheet" href="static/css/styles.css"/>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Game Store Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/styles.css">
 </head>
-<body>
-<div class="container">
-    <div id="auth-section">
-        <h2>Authentication</h2>
-        <div id="login-form">
-            <input type="text" id="username" placeholder="Username"/>
-            <input type="password" id="password" placeholder="Password"/>
-            <button onclick="login()">Login</button>
-            <button onclick="register()">Register</button>
+<body class="bg-gray-100">
+<div class="container mx-auto px-4 py-8">
+    <div id="auth-section" class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+        <div id="login-form" class="space-y-4">
+            <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded">
+            <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
+            <div class="flex space-x-4">
+                <button onclick="login()" class="w-1/2 bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Login</button>
+                <button onclick="register()" class="w-1/2 bg-green-500 text-white p-2 rounded hover:bg-green-600">Register</button>
+            </div>
         </div>
     </div>
 
     <div id="main-section" class="hidden">
-        <div class="header">
-            <h1>Library Management System</h1>
-            <button onclick="logout()">Logout</button>
+        <div class="header flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Video Game Store Management</h1>
+            <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
         </div>
 
-        <div class="video-games-section">
-            <h2>Add New Book</h2>
-            <div class="form-group">
-                <input type="text" id="video-game-name" placeholder="Name"/>
-                <input type="text" id="video-game-creator" placeholder="Creator"/>
-                <input type="text" id="video-game-year-published" placeholder="Year Published"/>
-                <input type="text" id="video-game-type" placeholder="type"/>
-                <button onclick="addBook()">Add Book</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Add Game Section -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4">Add New Game</h2>
+                <div class="space-y-4">
+                    <input type="text" id="game-title" placeholder="Title" class="w-full p-2 border rounded">
+                    <input type="text" id="game-creator" placeholder="Creator/Publisher" class="w-full p-2 border rounded">
+                    <input type="number" id="game-year" placeholder="Year Published" class="w-full p-2 border rounded">
+                    <input type="text" id="game-genre" placeholder="Genre" class="w-full p-2 border rounded">
+                    <input type="number" id="game-price" placeholder="Price" class="w-full p-2 border rounded">
+                    <input type="number" id="game-quantity" placeholder="Quantity" class="w-full p-2 border rounded">
+                    <button onclick="addGame()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Game</button>
+                </div>
             </div>
 
-            <h2>All Video Games</h2>
-            <div id="video-games-list" class="video-games-grid"></div>
+            <!-- Games List Section -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4">Game Inventory</h2>
+                <div id="games-list" class="grid grid-cols-1 gap-4"></div>
+            </div>
+        </div>
 
-            <h2>Loaned Books</h2>
-            <div id="loaned-video-games-list" class="video-games-grid"></div>
+        <!-- Loaned Games Section -->
+        <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Loaned Games</h2>
+            <div id="loaned-games-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="script.js"></script>
+<script src="static/js/script.js"></script>
 </body>
 </html>
