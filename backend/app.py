@@ -1,13 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime
+import re
 from models import db
 from models.admin import Admin
 from models.customer import Customer
 from models.video_game import VideoGame
 from models.loan import Loan
 
-app = Flask(__name__)
+app = Flask(__name__) 
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gamestore.db'
@@ -23,6 +24,37 @@ def init_app():
             admin = Admin(username='admin', password='admin123')
             db.session.add(admin)
             db.session.commit()
+
+
+# Helper Functions for Validation
+
+def validate_email(email):
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if re.match(pattern, email):
+        return True
+    return False
+
+
+def validate_phone(phone):
+    # Example for validating phone number (format: +1 (234) 567-890)
+    pattern = r'^\+?(\d{1,3})?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}$'
+    if re.match(pattern, phone):
+        return True
+    return False
+
+
+def validate_year(year):
+    current_year = datetime.now().year
+    if year and 1900 <= year <= current_year:
+        return True
+    return False
+
+
+def validate_genre(genre):
+    valid_genres = ['Action', 'Adventure', 'RPG', 'Sports', 'Shooter', 'Strategy', 'Puzzle', 'Simulation']
+    if genre in valid_genres:
+        return True
+    return False
 
 
 @app.route('/api/login', methods=['POST'])
@@ -55,6 +87,13 @@ def handle_customers():
         return jsonify([c.to_dict() for c in customers])
 
     data = request.json
+
+    # Validation for email, phone
+    if not validate_email(data['email']):
+        return jsonify({'error': 'Invalid email address'}), 400
+    if not validate_phone(data['phone']):
+        return jsonify({'error': 'Invalid phone number'}), 400
+
     customer = Customer(
         name=data['name'],
         email=data['email'],
@@ -72,6 +111,13 @@ def handle_games():
         return jsonify([g.to_dict() for g in games])
 
     data = request.json
+
+    # Validation for release year and genre
+    if not validate_year(data['release_year']):
+        return jsonify({'error': 'Invalid year for the game'}), 400
+    if not validate_genre(data['genre']):
+        return jsonify({'error': 'Invalid game genre'}), 400
+
     game = VideoGame(
         title=data['title'],
         publisher=data['publisher'],

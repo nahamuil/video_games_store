@@ -7,82 +7,96 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body>
 <!-- Login Section -->
-<div id="login-section" class="container mx-auto px-4 py-8">
-    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+<div id="login-section">
+    <div class="login-card">
         <h2 class="text-2xl font-bold mb-6">Admin Login</h2>
         <div class="space-y-4">
             <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded">
             <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
-            <button onclick="login()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-                Login
-            </button>
+            <button onclick="login()" class="w-full primary">Login</button>
         </div>
     </div>
 </div>
 
 <!-- Main Section -->
-<div id="main-section" class="hidden container mx-auto px-4 py-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div id="main-section" style="display: none;">
+    <div class="grid">
         <!-- Customer Registration -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-bold mb-4">Register Customer</h2>
-            <div class="space-y-4">
-                <input type="text" id="customer-name" placeholder="Name" class="w-full p-2 border rounded">
-                <input type="email" id="customer-email" placeholder="Email" class="w-full p-2 border rounded">
-                <input type="tel" id="customer-phone" placeholder="Phone" class="w-full p-2 border rounded">
-                <button onclick="addCustomer()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
-                    Add Customer
-                </button>
+        <div class="card">
+            <div class="section-header">
+                <h2>Register Customer</h2>
+            </div>
+            <div class="card-content">
+                <input type="text" id="customer-name" placeholder="Name">
+                <input type="email" id="customer-email" placeholder="Email">
+                <input type="tel" id="customer-phone" placeholder="Phone" oninput="validatePhoneNumber(event)">
+                <button onclick="addCustomer()" class="success">Add Customer</button>
             </div>
         </div>
 
         <!-- Game Registration -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-bold mb-4">Add Game</h2>
-            <div class="space-y-4">
-                <input type="text" id="game-title" placeholder="Title" class="w-full p-2 border rounded">
-                <input type="text" id="game-publisher" placeholder="Publisher" class="w-full p-2 border rounded">
-                <input type="number" id="game-year" placeholder="Release Year" class="w-full p-2 border rounded">
-                <input type="text" id="game-genre" placeholder="Genre" class="w-full p-2 border rounded">
-                <input type="number" id="game-price" placeholder="Price" step="0.01" class="w-full p-2 border rounded">
-                <input type="number" id="game-quantity" placeholder="Quantity" class="w-full p-2 border rounded">
-                <button onclick="addGame()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
-                    Add Game
-                </button>
+        <div class="card">
+            <div class="section-header">
+                <h2>Add Game</h2>
+            </div>
+            <div class="card-content">
+                <input type="text" id="game-title" placeholder="Title">
+                <input type="text" id="game-publisher" placeholder="Publisher">
+                <input type="number" id="game-year" placeholder="Release Year">
+                <select id="game-genre">
+                    <option value="">Select Genre</option>
+                    <option value="Action">Action</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="RPG">RPG</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Shooter">Shooter</option>
+                    <option value="Strategy">Strategy</option>
+                    <option value="Puzzle">Puzzle</option>
+                    <option value="Simulation">Simulation</option>
+                </select>
+                <input type="number" id="game-price" placeholder="Price" step="0.01">
+                <input type="number" id="game-quantity" placeholder="Quantity">
+                <button onclick="addGame()" class="success">Add Game</button>
             </div>
         </div>
     </div>
 
     <!-- Create Loan -->
-    <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
-        <h2 class="text-xl font-bold mb-4">Create Loan</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <select id="loan-customer" class="w-full p-2 border rounded">
-                <option value="">Select Customer</option>
-            </select>
-            <select id="loan-game" class="w-full p-2 border rounded">
-                <option value="">Select Game</option>
-            </select>
-            <input type="number" id="loan-price" placeholder="Loan Price" step="0.01" class="w-full p-2 border rounded">
+    <div class="card mt-8">
+        <div class="section-header">
+            <h2>Create Loan</h2>
         </div>
-        <button onclick="createLoan()" class="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-            Create Loan
-        </button>
+        <div class="card-content">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <select id="loan-customer">
+                    <option value="">Select Customer</option>
+                </select>
+                <select id="loan-game">
+                    <option value="">Select Game</option>
+                </select>
+                <input type="number" id="loan-price" placeholder="Loan Price" step="0.01">
+            </div>
+            <button onclick="createLoan()" class="primary">Create Loan</button>
+        </div>
     </div>
 
     <!-- Game Inventory -->
-    <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
-        <h2 class="text-xl font-bold mb-4">Game Inventory</h2>
+    <div class="card mt-8">
+        <div class="section-header">
+            <h2>Game Inventory</h2>
+        </div>
         <div id="games-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Games will be inserted here -->
         </div>
     </div>
 
     <!-- Active Loans -->
-    <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
-        <h2 class="text-xl font-bold mb-4">Active Loans</h2>
+    <div class="card mt-8">
+        <div class="section-header">
+            <h2>Active Loans</h2>
+        </div>
         <div id="active-loans" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Active loans will be inserted here -->
         </div>

@@ -1,82 +1,243 @@
-/* styles.css */
-
-/* Reset and base styles */
+/* Modern Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --success-color: #10b981;
+    --success-hover: #059669;
+    --danger-color: #ef4444;
+    --danger-hover: #dc2626;
+    --background: #0a0a0a;
+    --card-background: #1a1a1a;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --border-color: #2d2d2d;
+    --glow-color: #4f46e5;
+}
+
+html, body {
+    background: var(--background);
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+}
+
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.6;
-    background-color: #f3f4f6;
+    color: var(--text-primary);
 }
 
-/* Login section styles */
-.login-container {
-    animation: fadeIn 0.5s ease-in;
+/* Text Glow Effects */
+h1, h2, h3 {
+    color: #fff;
+    text-shadow: 0 0 10px var(--glow-color),
+    0 0 20px var(--glow-color),
+    0 0 30px var(--glow-color);
+    letter-spacing: 1px;
 }
 
-/* Form styles */
-input, select {
-    transition: border-color 0.2s ease;
+/* Main sections */
+#main-section, #login-section {
+    background: var(--background);
+    min-height: 100vh;
+    width: 100%;
+    padding: 2rem;
 }
 
-input:focus, select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+/* Login Section */
+#login-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
 }
 
-/* Button styles */
-button {
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
+.login-card {
+    background: var(--card-background);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(79, 70, 229, 0.2);
+    width: 100%;
+    max-width: 400px;
+    animation: fadeIn 0.5s ease;
+    border: 1px solid var(--border-color);
 }
 
-button:active {
-    transform: scale(0.98);
-}
-
-button:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-/* Card styles */
+/* Card Styles */
 .card {
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: var(--card-background);
+    border-radius: 1rem;
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    margin-bottom: 2rem;
 }
 
 .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
 }
 
-/* Game card specific styles */
-.game-card {
-    border-left: 4px solid #3b82f6;
+.card-content {
+    padding: 1.5rem;
 }
 
-.game-card.out-of-stock {
-    border-left-color: #ef4444;
+/* Form Elements */
+input, select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #2d2d2d;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
 }
 
-/* Loan card specific styles */
-.loan-card {
-    border-left: 4px solid #10b981;
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--glow-color);
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
 }
 
-.loan-card.overdue {
-    border-left-color: #ef4444;
+input::placeholder {
+    color: var(--text-secondary);
 }
 
-/* Animation keyframes */
+/* Button Styles */
+button {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+button:before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 0.6rem;
+    background: linear-gradient(45deg,
+    var(--glow-color),
+    transparent,
+    var(--glow-color));
+    z-index: -1;
+    animation: glowingBorder 3s linear infinite;
+}
+
+button.primary {
+    background: var(--primary-color);
+    color: white;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+button.primary:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 0 15px var(--glow-color);
+}
+
+button.success {
+    background: var(--success-color);
+    color: white;
+}
+
+button.success:hover {
+    background: var(--success-hover);
+    box-shadow: 0 0 15px var(--success-color);
+}
+
+button.danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+button.danger:hover {
+    background: var(--danger-hover);
+    box-shadow: 0 0 15px var(--danger-color);
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    width: 100%;
+}
+
+/* Section Headers */
+.section-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Game and Loan Cards */
+.game-card, .loan-card {
+    background: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.game-card h3, .loan-card h3 {
+    color: #fff;
+    text-shadow: 0 0 5px var(--glow-color);
+    margin-bottom: 1rem;
+}
+
+.game-card p, .loan-card p {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 2px var(--glow-color);
+}
+
+/* Status Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.2);
+}
+
+.badge.available {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    text-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+}
+
+.badge.loaned {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    text-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+}
+
+/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -88,98 +249,59 @@ button:disabled {
     }
 }
 
-/* Header styles */
-.header {
-    background: white;
-    border-bottom: 1px solid #e5e7eb;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+@keyframes glowingBorder {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-/* Grid layout improvements */
-.grid-container {
-    display: grid;
-    gap: 1.5rem;
-    padding: 1.5rem;
+/* Responsive Design */
+@media (max-width: 768px) {
+    #main-section, #login-section {
+        padding: 1rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .card {
+        border-radius: 0.75rem;
+    }
 }
 
-/* Status indicators */
-.status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.status-badge.available {
-    background-color: #dcfce7;
-    color: #166534;
-}
-
-.status-badge.loaned {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
-
-/* Custom scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
-    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #c0c0c0;
+    background: #4f46e5;
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #a0a0a0;
+    background: #4338ca;
+    box-shadow: 0 0 10px var(--glow-color);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .grid-container {
-        grid-template-columns: 1fr;
-    }
-
-    .header {
-        padding: 1rem;
-    }
+/* Utility Classes */
+.mt-8 {
+    margin-top: 2rem;
 }
 
-/* Loading states */
-.loading {
-    position: relative;
+.space-y-4 > * + * {
+    margin-top: 1rem;
 }
 
-.loading::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Error states */
-.error-text {
-    color: #dc2626;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-}
-
-/* Success states */
-.success-text {
-    color: #059669;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
+.hidden {
+    display: none !important;
 }
