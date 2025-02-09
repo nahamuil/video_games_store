@@ -3,60 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Game Store Management</title>
+    <title>Game Store Management</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="static/css/styles.css">
+    <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
-<div class="container mx-auto px-4 py-8">
-    <div id="auth-section" class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
-        <div id="login-form" class="space-y-4">
+<body class="bg-gray-100 min-h-screen">
+<!-- Login Section -->
+<div id="login-section" class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-6">Admin Login</h2>
+        <div class="space-y-4">
             <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded">
             <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
-            <div class="flex space-x-4">
-                <button onclick="login()" class="w-1/2 bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Login</button>
-                <button onclick="register()" class="w-1/2 bg-green-500 text-white p-2 rounded hover:bg-green-600">Register</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="main-section" class="hidden">
-        <div class="header flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold">Video Game Store Management</h1>
-            <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Add Game Section -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-xl font-bold mb-4">Add New Game</h2>
-                <div class="space-y-4">
-                    <input type="text" id="game-title" placeholder="Title" class="w-full p-2 border rounded">
-                    <input type="text" id="game-creator" placeholder="Creator/Publisher" class="w-full p-2 border rounded">
-                    <input type="number" id="game-year" placeholder="Year Published" class="w-full p-2 border rounded">
-                    <input type="text" id="game-genre" placeholder="Genre" class="w-full p-2 border rounded">
-                    <input type="number" id="game-price" placeholder="Price" class="w-full p-2 border rounded">
-                    <input type="number" id="game-quantity" placeholder="Quantity" class="w-full p-2 border rounded">
-                    <button onclick="addGame()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Game</button>
-                </div>
-            </div>
-
-            <!-- Games List Section -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-xl font-bold mb-4">Game Inventory</h2>
-                <div id="games-list" class="grid grid-cols-1 gap-4"></div>
-            </div>
-        </div>
-
-        <!-- Loaned Games Section -->
-        <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-bold mb-4">Loaned Games</h2>
-            <div id="loaned-games-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <button onclick="login()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                Login
+            </button>
         </div>
     </div>
 </div>
+
+<!-- Main Section -->
+<div id="main-section" class="hidden container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Customer Registration -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Register Customer</h2>
+            <div class="space-y-4">
+                <input type="text" id="customer-name" placeholder="Name" class="w-full p-2 border rounded">
+                <input type="email" id="customer-email" placeholder="Email" class="w-full p-2 border rounded">
+                <input type="tel" id="customer-phone" placeholder="Phone" class="w-full p-2 border rounded">
+                <button onclick="addCustomer()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+                    Add Customer
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Registration -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold mb-4">Add Game</h2>
+            <div class="space-y-4">
+                <input type="text" id="game-title" placeholder="Title" class="w-full p-2 border rounded">
+                <input type="text" id="game-publisher" placeholder="Publisher" class="w-full p-2 border rounded">
+                <input type="number" id="game-year" placeholder="Release Year" class="w-full p-2 border rounded">
+                <input type="text" id="game-genre" placeholder="Genre" class="w-full p-2 border rounded">
+                <input type="number" id="game-price" placeholder="Price" step="0.01" class="w-full p-2 border rounded">
+                <input type="number" id="game-quantity" placeholder="Quantity" class="w-full p-2 border rounded">
+                <button onclick="addGame()" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+                    Add Game
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Loan -->
+    <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold mb-4">Create Loan</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <select id="loan-customer" class="w-full p-2 border rounded">
+                <option value="">Select Customer</option>
+            </select>
+            <select id="loan-game" class="w-full p-2 border rounded">
+                <option value="">Select Game</option>
+            </select>
+            <input type="number" id="loan-price" placeholder="Loan Price" step="0.01" class="w-full p-2 border rounded">
+        </div>
+        <button onclick="createLoan()" class="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+            Create Loan
+        </button>
+    </div>
+
+    <!-- Game Inventory -->
+    <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold mb-4">Game Inventory</h2>
+        <div id="games-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Games will be inserted here -->
+        </div>
+    </div>
+
+    <!-- Active Loans -->
+    <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold mb-4">Active Loans</h2>
+        <div id="active-loans" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Active loans will be inserted here -->
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="static/js/script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

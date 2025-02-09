@@ -1,189 +1,179 @@
-// API URL
-const API_URL = 'http://127.0.0.1:5000';
+// script.js
+const API_URL = 'http://localhost:5000/api';
 
-// Authentication Functions
+// Authentication
 async function login() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
     try {
-        const response = await axios.post(`${API_URL}/login`, {
-            username: username,
-            password: password
-        });
-
-        localStorage.setItem('token', response.data.token);
-        showMainSection();
-        await loadGames();
+        const response = await axios.post(`${API_URL}/login`, {username, password});
+        if (response.data.success) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('main-section').classList.remove('hidden');
+            loadDashboard();
+        }
     } catch (error) {
-        alert('Login failed: ' + (error.response?.data?.message || 'Unknown error'));
+        const errorMessage = error.response?.data?.message || 'An error occurred';
+
+        if (errorMessage === 'Incorrect password') {
+            alert('Wrong password for this username. Please try again.');
+        } else if (errorMessage === 'Invalid username') {
+            alert('Username not found. Please check your credentials.');
+        } else {
+            alert('Login failed. Please try again.');
+        }
     }
 }
 
-async function register() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+// Customer Management
+async function addCustomer() {
+    const data = {
+        name: document.getElementById('customer-name').value,
+        email: document.getElementById('customer-email').value,
+        phone: document.getElementById('customer-phone').value
+    };
 
     try {
-        const response = await axios.post(`${API_URL}/register`, {
-            username: username,
-            password: password
-        });
-        alert('Registration successful! Please login.');
+        await axios.post(`${API_URL}/customers`, data);
+        loadCustomers();
+        clearCustomerForm();
     } catch (error) {
-        alert('Registration failed: ' + (error.response?.data?.message || 'Unknown error'));
+        alert('Error adding customer');
     }
 }
 
-function logout() {
-    localStorage.removeItem('token');
-    showAuthSection();
+async function loadCustomers() {
+    const response = await axios.get(`${API_URL}/customers`);
+    const select = document.getElementById('loan-customer');
+    select.innerHTML = '<option value="">Select Customer</option>';
+    response.data.forEach(customer => {
+        select.innerHTML += `<option value="${customer.id}">${customer.name}</option>`;
+    });
 }
 
-// UI Helper Functions
-function showMainSection() {
-    document.getElementById('auth-section').classList.add('hidden');
-    document.getElementById('main-section').classList.remove('hidden');
+// Game Management
+async function addGame() {
+    const data = {
+        title: document.getElementById('game-title').value,
+        publisher: document.getElementById('game-publisher').value,
+        release_year: parseInt(document.getElementById('game-year').value),
+        genre: document.getElementById('game-genre').value,
+        price: parseFloat(document.getElementById('game-price').value),
+        quantity: parseInt(document.getElementById('game-quantity').value)
+    };
+
+    try {
+        await axios.post(`${API_URL}/games`, data);
+        loadGames();
+        clearGameForm();
+    } catch (error) {
+        alert('Error adding game');
+    }
 }
 
-function showAuthSection() {
-    document.getElementById('auth-section').classList.remove('hidden');
-    document.getElementById('main-section').classList.add('hidden');
-}
-
-// Game Management Functions
 async function loadGames() {
+    const response = await axios.get(`${API_URL}/games`);
+    const gamesList = document.getElementById('games-list');
+    const select = document.getElementById('loan-game');
+
+    gamesList.innerHTML = '';
+    select.innerHTML = '<option value="">Select Game</option>';
+
+    response.data.forEach(game => {
+        gamesList.innerHTML += createGameCard(game);
+        if (game.available) {
+            select.innerHTML += `<option value="${game.id}">${game.title}</option>`;
+        }
+    });
+}
+
+// Loan Management
+async function createLoan() {
+    const data = {
+        game_id: document.getElementById('loan-game').value,
+        customer_id: document.getElementById('loan-customer').value,
+        price: parseFloat(document.getElementById('loan-price').value)
+    };
+
     try {
-        const response = await axios.get(`${API_URL}/games`, {
-            headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
-        });
-
-        const gamesList = document.getElementById('games-list');
-        const loanedGamesList = document.getElementById('loaned-games-list');
-
-        gamesList.innerHTML = '';
-        loanedGamesList.innerHTML = '';
-
-        response.data.games.forEach(game => {
-            const gameCard = createGameCard(game);
-            if (game.is_loaned) {
-                loanedGamesList.appendChild(gameCard);
-            } else {
-                gamesList.appendChild(gameCard);
-            }
-        });
+        await axios.post(`${API_URL}/loans`, data);
+        loadLoans();
+        loadGames();
+        clearLoanForm();
     } catch (error) {
-        alert('Error loading games: ' + (error.response?.data?.message || 'Unknown error'));
+        alert('Error creating loan');
     }
 }
 
-function createGameCard(game) {
-    const div = document.createElement('div');
-    div.className = 'bg-gray-50 p-4 rounded-lg shadow';
-    div.innerHTML = `
-        <h3 class="font-bold text-lg">${game.title}</h3>
-        <p class="text-gray-600">Creator: ${game.creator}</p>
-        <p class="text-gray-600">Year: ${game.year_published}</p>
-        <p class="text-gray-600">Genre: ${game.genre}</p>
-        <p class="text-gray-600">Price: $${game.price}</p>
-        <p class="text-gray-600">Quantity: ${game.quantity}</p>
-        <div class="mt-4 flex justify-between">
-            ${!game.is_loaned ?
-        `<button onclick="loanGame(${game.id})" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                    Loan Game
-                </button>` :
-        `<button onclick="returnGame(${game.id})" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-                    Return Game
-                </button>`
+async function loadLoans() {
+    const response = await axios.get(`${API_URL}/loans`);
+    const loansList = document.getElementById('active-loans');
+    loansList.innerHTML = '';
+
+    response.data.forEach(loan => {
+        loansList.innerHTML += createLoanCard(loan);
+    });
+}
+
+async function returnLoan(loanId) {
+    try {
+        await axios.post(`${API_URL}/loans/${loanId}/return`);
+        loadLoans();
+        loadGames();
+    } catch (error) {
+        alert('Error returning loan');
     }
-            <button onclick="deleteGame(${game.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                Delete
+}
+
+// Helper Functions
+function createGameCard(game) {
+    return `
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="font-bold">${game.title}</h3>
+            <p>Publisher: ${game.publisher}</p>
+            <p>Year: ${game.release_year}</p>
+            <p>Genre: ${game.genre}</p>
+            <p>Price: $${game.price}</p>
+            <p>Available: ${game.quantity}</p>
+        </div>
+    `;
+}
+
+function createLoanCard(loan) {
+    return `
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h3 class="font-bold">${loan.game_title}</h3>
+            <p>Customer: ${loan.customer_name}</p>
+            <p>Loan Date: ${new Date(loan.loan_date).toLocaleDateString()}</p>
+            <p>Price: $${loan.price}</p>
+            <button onclick="returnLoan(${loan.id})" class="bg-blue-500 text-white px-4 py-2 rounded">
+                Return
             </button>
         </div>
     `;
-    return div;
 }
 
-async function addGame() {
-    const title = document.getElementById('game-title').value;
-    const creator = document.getElementById('game-creator').value;
-    const year = document.getElementById('game-year').value;
-    const genre = document.getElementById('game-genre').value;
-    const price = document.getElementById('game-price').value;
-    const quantity = document.getElementById('game-quantity').value;
-
-    try {
-        await axios.post(`${API_URL}/games`, {
-            title: title,
-            creator: creator,
-            year_published: parseInt(year),
-            genre: genre,
-            price: parseFloat(price),
-            quantity: parseInt(quantity)
-        }, {
-            headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
-        });
-
-        // Clear form
-        document.getElementById('game-title').value = '';
-        document.getElementById('game-creator').value = '';
-        document.getElementById('game-year').value = '';
-        document.getElementById('game-genre').value = '';
-        document.getElementById('game-price').value = '';
-        document.getElementById('game-quantity').value = '';
-
-        await loadGames();
-        alert('Game added successfully!');
-    } catch (error) {
-        alert('Error adding game: ' + (error.response?.data?.message || 'Unknown error'));
-    }
+function loadDashboard() {
+    loadCustomers();
+    loadGames();
+    loadLoans();
 }
 
-async function deleteGame(gameId) {
-    if (!confirm('Are you sure you want to delete this game?')) return;
-
-    try {
-        await axios.delete(`${API_URL}/games/${gameId}`, {
-            headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
-        });
-        await loadGames();
-        alert('Game deleted successfully!');
-    } catch (error) {
-        alert('Error deleting game: ' + (error.response?.data?.message || 'Unknown error'));
-    }
+function clearCustomerForm() {
+    ['customer-name', 'customer-email', 'customer-phone'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
 }
 
-async function loanGame(gameId) {
-    try {
-        await axios.post(`${API_URL}/games/${gameId}/loan`, {}, {
-            headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
-        });
-        await loadGames();
-        alert('Game loaned successfully!');
-    } catch (error) {
-        alert('Error loaning game: ' + (error.response?.data?.message || 'Unknown error'));
-    }
+function clearGameForm() {
+    ['game-title', 'game-publisher', 'game-year', 'game-genre', 'game-price', 'game-quantity'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
 }
 
-async function returnGame(gameId) {
-    try {
-        await axios.post(`${API_URL}/games/${gameId}/return`, {}, {
-            headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
-        });
-        await loadGames();
-        alert('Game returned successfully!');
-    } catch (error) {
-        alert('Error returning game: ' + (error.response?.data?.message || 'Unknown error'));
-    }
+function clearLoanForm() {
+    ['loan-game', 'loan-customer', 'loan-price'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
 }
-
-// Check authentication status on page load
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        showMainSection();
-        loadGames();
-    } else {
-        showAuthSection();
-    }
-});
