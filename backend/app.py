@@ -135,13 +135,13 @@ def handle_games():
 def handle_loans():
     if request.method == 'GET':
         loans = Loan.query.filter_by(return_date=None).all()
-        return jsonify([l.to_dict() for l in loans])
+        return jsonify([l.to_dict() for l in loans]),201
 
     data = request.json
     game = VideoGame.query.get_or_404(data['game_id'])
 
-    if game.quantity < 1:
-        return jsonify({'error': 'Game not available'}), 400
+    # if game.quantity < 1:
+    #     return jsonify({'error': 'Game not available'}), 400
 
     loan = Loan(
         game_id=data['game_id'],
@@ -152,7 +152,7 @@ def handle_loans():
 
     db.session.add(loan)
     db.session.commit()
-    return jsonify(loan.to_dict()), 201
+    return jsonify("loan added success"), 201
 
 
 @app.route('/api/loans/<int:loan_id>/return', methods=['POST'])

@@ -97,12 +97,15 @@ async function createLoan() {
     const gameId = document.getElementById('loan-game').value;
     const customerId = document.getElementById('loan-customer').value;
     const price = parseFloat(document.getElementById('loan-price').value);
+    alert('a.');
 
     // Validate Loan Form
     if (!gameId || !customerId || !price) {
         alert('Please select a game, customer, and enter the loan price.');
         return;
     }
+
+    alert('b.');
 
     const data = {game_id: gameId, customer_id: customerId, price};
 

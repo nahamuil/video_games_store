@@ -21,7 +21,7 @@
 </div>
 
 <!-- Main Section -->
-<div id="main-section" style="display: none;">
+<div id="main-section" class="hidden">
     <div class="grid">
         <!-- Customer Registration -->
         <div class="card">
@@ -31,7 +31,7 @@
             <div class="card-content">
                 <input type="text" id="customer-name" placeholder="Name">
                 <input type="email" id="customer-email" placeholder="Email">
-                <input type="tel" id="customer-phone" placeholder="Phone" oninput="validatePhoneNumber(event)">
+                <input type="number" id="customer-phone" placeholder="Phone" oninput="validatePhoneNumber(event)">
                 <button onclick="addCustomer()" class="success">Add Customer</button>
             </div>
         </div>
