@@ -8,7 +8,7 @@ from models.customer import Customer
 from models.video_game import VideoGame
 from models.loan import Loan
 
-app = Flask(__name__) 
+app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gamestore.db'
@@ -135,24 +135,58 @@ def handle_games():
 def handle_loans():
     if request.method == 'GET':
         loans = Loan.query.filter_by(return_date=None).all()
-        return jsonify([l.to_dict() for l in loans]),201
+        return jsonify([{
+            'id': l.id,
+            'loan_date': l.loan_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'return_date': l.return_date.strftime('%Y-%m-%d %H:%M:%S') if l.return_date else None,
+            'price': l.price,
+            'game': {
+                'id': l.game.id,
+                'title': l.game.title,
+                'publisher': l.game.publisher
+            },
+            'customer': {
+                'id': l.customer.id,
+                'name': l.customer.name,
+                'email': l.customer.email
+            }
+        } for l in loans])
 
     data = request.json
     game = VideoGame.query.get_or_404(data['game_id'])
+    customer = Customer.query.get_or_404(data['customer_id'])
 
-    # if game.quantity < 1:
-    #     return jsonify({'error': 'Game not available'}), 400
+    if game.quantity < 1:
+        return jsonify({'error': 'Game not available'}), 400
 
+    # Create loan with the game's price
     loan = Loan(
         game_id=data['game_id'],
         customer_id=data['customer_id'],
-        price=data['price']
+        loan_date=datetime.utcnow(),
+        price=game.price  # Get the price from the game
     )
     game.quantity -= 1
 
-    db.session.add(loan)
-    db.session.commit()
-    return jsonify("loan added success"), 201
+    try:
+        db.session.add(loan)
+        db.session.commit()
+        return jsonify({
+            'id': loan.id,
+            'loan_date': loan.loan_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'price': loan.price,
+            'game': {
+                'id': loan.game.id,
+                'title': loan.game.title
+            },
+            'customer': {
+                'id': loan.customer.id,
+                'name': loan.customer.name
+            }
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/loans/<int:loan_id>/return', methods=['POST'])

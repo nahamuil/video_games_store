@@ -18,6 +18,20 @@ async function login() {
     }
 }
 
+function logout() {
+    // Hide main section
+    document.getElementById('main-section').classList.add('hidden');
+    // Show login section
+    document.getElementById('login-section').classList.remove('hidden');
+    // Clear all forms
+    clearCustomerForm();
+    clearGameForm();
+    clearLoanForm();
+    // Clear login form
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+}
+
 // Customer Management
 async function addCustomer() {
     const name = document.getElementById('customer-name').value;
@@ -184,24 +198,65 @@ async function loadCustomers() {
 
 // Load Loans
 async function loadLoans() {
-    const response = await axios.get(`${API_URL}/loans`);
-    const loansList = document.getElementById('active-loans');
-    loansList.innerHTML = '';
+    try {
+        const response = await axios.get(`${API_URL}/loans`);
+        const loansList = document.getElementById('active-loans');
+        loansList.innerHTML = '';
 
-    response.data.forEach(loan => {
-        loansList.innerHTML += createLoanCard(loan);
-    });
+        if (response.data && Array.isArray(response.data)) {
+            response.data.forEach(loan => {
+                loansList.innerHTML += createLoanCard(loan);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading loans:', error);
+        alert('Error loading loans');
+    }
 }
 
 function createLoanCard(loan) {
+    // Add null checks to prevent undefined errors
+    if (!loan || !loan.game || !loan.customer) {
+        console.error('Invalid loan data:', loan);
+        return '';
+    }
+
     return `
-        <div class="bg-white p-4 rounded-lg shadow">
+        <div class="loan-card">
             <h3 class="font-bold">${loan.game.title}</h3>
             <p>Customer: ${loan.customer.name}</p>
             <p>Loaned On: ${loan.loan_date}</p>
-            <button onclick="returnLoan(${loan.id})" class="bg-red-500 text-white p-2 rounded">Return</button>
+            <p>Price: $${loan.price.toFixed(2)}</p>
+            <button onclick="returnLoan(${loan.id})" class="danger">Return</button>
         </div>
     `;
+}
+
+async function createLoan() {
+    const gameId = document.getElementById('loan-game').value;
+    const customerId = document.getElementById('loan-customer').value;
+
+    if (!gameId || !customerId) {
+        alert('Please select a game and a customer.');
+        return;
+    }
+
+    try {
+        const response = await axios.post(`${API_URL}/loans`, {
+            game_id: parseInt(gameId),
+            customer_id: parseInt(customerId)
+        });
+
+        if (response.status === 201) {
+            await loadLoans();
+            await loadGames();
+            clearLoanForm();
+        }
+    } catch (error) {
+        console.error('Error creating loan:', error);
+        const errorMessage = error.response?.data?.error || 'Error creating loan';
+        alert(errorMessage);
+    }
 }
 
 async function returnLoan(loanId) {

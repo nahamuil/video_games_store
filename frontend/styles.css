@@ -317,3 +317,26 @@ button.danger:hover {
 .hidden {
     display: none !important;
 }
+
+.header-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+}
+
+#logout-btn {
+    width: auto;
+    padding: 0.5rem 1.5rem;
+    background: var(--danger-color);
+    color: white;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+#logout-btn:hover {
+    background: var(--danger-hover);
+    box-shadow: 0 0 15px var(--danger-color);
+    transform: translateY(-2px);
+}
