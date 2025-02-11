@@ -96,18 +96,14 @@ function validateYear(year) {
 async function createLoan() {
     const gameId = document.getElementById('loan-game').value;
     const customerId = document.getElementById('loan-customer').value;
-    const price = parseFloat(document.getElementById('loan-price').value);
-    alert('a.');
 
     // Validate Loan Form
-    if (!gameId || !customerId || !price) {
-        alert('Please select a game, customer, and enter the loan price.');
+    if (!gameId || !customerId) {
+        alert('Please select a game and a customer.');
         return;
     }
 
-    alert('b.');
-
-    const data = {game_id: gameId, customer_id: customerId, price};
+    const data = {game_id: gameId, customer_id: customerId};
 
     try {
         await axios.post(`${API_URL}/loans`, data);
@@ -138,7 +134,6 @@ function clearGameForm() {
 function clearLoanForm() {
     document.getElementById('loan-customer').value = '';
     document.getElementById('loan-game').value = '';
-    document.getElementById('loan-price').value = '';
 }
 
 function loadDashboard() {
@@ -166,7 +161,7 @@ async function loadGames() {
 
 function createGameCard(game) {
     return `
-        <div class="bg-white p-4 rounded-lg shadow">
+        <div class="game-card">
             <h3 class="font-bold">${game.title}</h3>
             <p>Publisher: ${game.publisher}</p>
             <p>Year: ${game.release_year}</p>
@@ -203,7 +198,6 @@ function createLoanCard(loan) {
         <div class="bg-white p-4 rounded-lg shadow">
             <h3 class="font-bold">${loan.game.title}</h3>
             <p>Customer: ${loan.customer.name}</p>
-            <p>Price: $${loan.price}</p>
             <p>Loaned On: ${loan.loan_date}</p>
             <button onclick="returnLoan(${loan.id})" class="bg-red-500 text-white p-2 rounded">Return</button>
         </div>

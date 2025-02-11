@@ -23,5 +23,4 @@ class Loan(db.Model):
             'customer_name': self.customer.name,
             'loan_date': self.loan_date.isoformat(),
             'return_date': self.return_date.isoformat() if self.return_date else None,
-            'price': self.price
         }
