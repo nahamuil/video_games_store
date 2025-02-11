@@ -173,6 +173,22 @@ async function loadGames() {
     });
 }
 
+// Add this new function to your script.js
+async function deleteGame(gameId) {
+    if (!confirm('Are you sure you want to delete this game? This action cannot be undone.')) {
+        return;
+    }
+
+    try {
+        await axios.delete(`${API_URL}/games/${gameId}`);
+        loadGames(); // Reload the games list
+    } catch (error) {
+        const errorMessage = error.response?.data?.error || 'Error deleting game';
+        alert(errorMessage);
+    }
+}
+
+// Update the createGameCard function to include a delete button
 function createGameCard(game) {
     return `
         <div class="game-card">
@@ -182,6 +198,7 @@ function createGameCard(game) {
             <p>Genre: ${game.genre}</p>
             <p>Price: $${game.price}</p>
             <p>Available: ${game.quantity}</p>
+            <button onclick="deleteGame(${game.id})" class="danger">Delete Game</button>
         </div>
     `;
 }

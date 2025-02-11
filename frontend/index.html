@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Store Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Ofek Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
 <!-- Login Section -->
 <div id="login-section">
     <div class="login-card">
-        <h2 class="text-2xl font-bold mb-6">Admin Login</h2>
+        <h2 class="admin-login">Admin Login</h2>
         <div class="space-y-4">
             <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded">
             <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
-            <button onclick="login()" class="w-full primary">Login</button>
+            <button onclick="login()" class="primary">Login</button>
         </div>
     </div>
 </div>
@@ -23,8 +23,12 @@
 <!-- Main Section -->
 <div id="main-section" class="hidden">
     <div class="header-container">
-        <button id="logout-btn" class="danger" onclick="logout()">Logout</button>
+        <button id="logout-btn" class="danger" onclick="logout()">
+            <span class="icon">👤</span>
+            Logout
+        </button>
     </div>
+
     <div class="grid">
         <!-- Customer Registration -->
         <div class="card">
@@ -34,7 +38,7 @@
             <div class="card-content">
                 <input type="text" id="customer-name" placeholder="Name">
                 <input type="email" id="customer-email" placeholder="Email">
-                <input type="number" id="customer-phone" placeholder="Phone" oninput="validatePhoneNumber(event)">
+                <input type="tel" id="customer-phone" placeholder="Phone">
                 <button onclick="addCustomer()" class="success">Add Customer</button>
             </div>
         </div>
@@ -72,7 +76,7 @@
             <h2>Create Loan</h2>
         </div>
         <div class="card-content">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <select id="loan-customer">
                     <option value="">Select Customer</option>
                 </select>
@@ -105,7 +109,6 @@
     </div>
 </div>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="script.js"></script>
 </body>

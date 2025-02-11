@@ -201,6 +201,25 @@ def return_loan(loan_id):
     return jsonify(loan.to_dict())
 
 
+# Add this new route to your Flask app (app.py)
+@app.route('/api/games/<int:game_id>', methods=['DELETE'])
+def delete_game(game_id):
+    game = VideoGame.query.get_or_404(game_id)
+
+    # Check if game has any active loans
+    active_loans = Loan.query.filter_by(game_id=game_id, return_date=None).first()
+    if active_loans:
+        return jsonify({'error': 'Cannot delete game with active loans'}), 400
+
+    try:
+        db.session.delete(game)
+        db.session.commit()
+        return jsonify({'message': 'Game deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     init_app()  # Call initialization function before running the app
     app.run(debug=True)
