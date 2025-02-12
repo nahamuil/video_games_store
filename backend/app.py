@@ -30,9 +30,20 @@ def init_app():
 
 def validate_email(email):
     pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    if re.match(pattern, email):
-        return True
-    return False
+
+    # Check if email format is valid
+    if not re.match(pattern, email):
+        return False
+
+    # Normalize email (convert to lowercase to prevent case-sensitive duplicates)
+    email = email.strip().lower()
+
+    # Check if email already exists in the database
+    existing_customer = Customer.query.filter_by(email=email).first()
+    if existing_customer:
+        return False  # Email already exists
+
+    return True
 
 
 def validate_phone(phone):
@@ -101,7 +112,7 @@ def handle_customers():
     )
     db.session.add(customer)
     db.session.commit()
-    return jsonify(customer.to_dict()), 201
+    return jsonify(customer.to_dict()), 200
 
 
 @app.route('/api/games', methods=['GET', 'POST'])
@@ -133,7 +144,7 @@ def handle_games():
     )
     db.session.add(game)
     db.session.commit()
-    return jsonify(game.to_dict()), 201
+    return jsonify(game.to_dict()), 200
 
 
 @app.route('/api/loans', methods=['GET', 'POST'])
@@ -147,7 +158,6 @@ def handle_loans():
         return jsonify({'error': 'Missing required data'}), 400
 
     game = VideoGame.query.get_or_404(data['game_id'])
-    customer = Customer.query.get_or_404(data['customer_id'])
 
     if game.quantity < 1:
         return jsonify({'error': 'Game not available'}), 400
@@ -155,7 +165,7 @@ def handle_loans():
     loan = Loan(
         game_id=data['game_id'],
         customer_id=data['customer_id'],
-        loan_date=datetime.utcnow(),
+        loan_date=datetime.now(),
         price=game.price
     )
     game.quantity -= 1
@@ -163,7 +173,7 @@ def handle_loans():
     try:
         db.session.add(loan)
         db.session.commit()
-        return jsonify(loan.to_dict()), 201
+        return jsonify(loan.to_dict()), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
@@ -207,5 +217,5 @@ def delete_game(game_id):
 
 
 if __name__ == '__main__':
-    init_app()  # Call initialization function before running the app
+    init_app()
     app.run(debug=True)

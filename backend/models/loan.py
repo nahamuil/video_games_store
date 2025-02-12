@@ -6,7 +6,7 @@ class Loan(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     game_id = db.Column(db.Integer, db.ForeignKey('video_game.id', ondelete='CASCADE'), nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    loan_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    loan_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
     return_date = db.Column(db.DateTime)
     price = db.Column(db.Float, nullable=False)
 

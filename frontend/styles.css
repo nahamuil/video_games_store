@@ -205,12 +205,6 @@ button.danger:hover {
     border-bottom: 1px solid var(--border-color);
 }
 
-.section-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-}
-
 /* Game and Loan Cards */
 .game-card, .loan-card {
     background: var(--card-background);
@@ -397,10 +391,10 @@ button.danger:hover {
 .section-header h2 {
     font-size: 1.5rem;
     font-weight: 600;
-    background: linear-gradient(45deg, #fff, #64b5f6);
+    background: linear-gradient(45deg, #ffffff, #008dff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 10px rgba(33, 20, 237, 0.5);
+    text-shadow: 0 0 10px rgb(60, 179, 240);
 }
 
 /* Enhanced Form Elements */

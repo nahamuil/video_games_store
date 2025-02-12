@@ -217,6 +217,7 @@ async function loadGames() {
     gamesList.innerHTML = '';
     select.innerHTML = '<option value="">Select Game</option>';
 
+
     response.data.forEach(game => {
         // Add to games list
         gamesList.innerHTML += createGameCard(game);
@@ -246,7 +247,7 @@ async function deleteGame(gameId) {
 function createGameCard(game) {
     return `
         <div class="game-card">
-            <img src="${game.image_url}" alt="${game.title}" class="w-full h-48 object-cover mb-2">
+            <img src="${game.image_url}" alt="${game.title}" class="game-url">
             <h3 class="font-bold">${game.title}</h3>
             <p>Publisher: ${game.publisher}</p>
             <p>Year: ${game.release_year}</p>
@@ -287,7 +288,9 @@ async function loadLoans() {
 }
 
 function createLoanCard(loan) {
-    // Add null checks to prevent undefined errors
+    if (loan.return_date)
+        return '';
+
     if (!loan || !loan.game || !loan.customer) {
         console.error('Invalid loan data:', loan);
         return '';
