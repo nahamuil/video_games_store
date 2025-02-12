@@ -304,39 +304,19 @@ function createLoanCard(loan) {
     `;
 }
 
-async function createLoan() {
-    const gameId = document.getElementById('loan-game').value;
-    const customerId = document.getElementById('loan-customer').value;
 
-    if (!gameId || !customerId) {
-        alert('Please select a game and a customer.');
-        return;
-    }
-
+async function returnLoan(loanId) {
     try {
-        const response = await axios.post(`${API_URL}/loans`, {
-            game_id: parseInt(gameId),
-            customer_id: parseInt(customerId)
-        });
-
-        if (response.status === 201) {
-            await loadLoans();
-            await loadGames();
-            clearLoanForm();
+        const response = await axios.post(`${API_URL}/loans/${loanId}/return`);
+        if (response.status === 200) {
+            await loadLoans();  // Refresh the loans list
+            await loadGames();  // Refresh the games list to update quantities
+            alert('Game returned successfully!');
         }
     } catch (error) {
-        console.error('Error creating loan:', error);
-        const errorMessage = error.response?.data?.error || 'Error creating loan';
+        console.error('Error returning loan:', error);
+        const errorMessage = error.response?.data?.error || 'Error returning loan';
         alert(errorMessage);
     }
 }
 
-async function returnLoan(loanId) {
-    try {
-        await axios.post(`${API_URL}/loans/${loanId}/return`);
-        loadLoans();
-        loadGames();
-    } catch (error) {
-        alert('Error returning loan');
-    }
-}

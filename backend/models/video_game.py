@@ -9,9 +9,10 @@ class VideoGame(db.Model):
     genre = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    image_url = db.Column(db.String(500), nullable=False)  # Added image_url field
+    image_url = db.Column(db.String(500), nullable=False)
 
-    loans = db.relationship('Loan', cascade='all, delete-orphan')
+    # Updated relationship with back_populates
+    loans = db.relationship('Loan', back_populates='game', cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
@@ -22,5 +23,5 @@ class VideoGame(db.Model):
             'genre': self.genre,
             'price': self.price,
             'quantity': self.quantity,
-            'image_url': self.image_url  # Added to dictionary representation
+            'image_url': self.image_url
         }

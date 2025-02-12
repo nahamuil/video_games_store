@@ -20,8 +20,8 @@ def init_app():
     with app.app_context():
         db.create_all()
         # Check if admin exists, if not create default admin
-        if not Admin.query.filter_by(username='admin').first():
-            admin = Admin(username='admin', password='admin123')
+        if not Admin.query.filter_by(username='o').first():
+            admin = Admin(username='o', password='123')
             db.session.add(admin)
             db.session.commit()
 
@@ -136,19 +136,57 @@ def handle_games():
     return jsonify(game.to_dict()), 201
 
 
+@app.route('/api/loans', methods=['GET', 'POST'])
+def handle_loans():
+    if request.method == 'GET':
+        loans = Loan.query.all()
+        return jsonify([loan.to_dict() for loan in loans])
+
+    data = request.json
+    if not data or 'game_id' not in data or 'customer_id' not in data:
+        return jsonify({'error': 'Missing required data'}), 400
+
+    game = VideoGame.query.get_or_404(data['game_id'])
+    customer = Customer.query.get_or_404(data['customer_id'])
+
+    if game.quantity < 1:
+        return jsonify({'error': 'Game not available'}), 400
+
+    loan = Loan(
+        game_id=data['game_id'],
+        customer_id=data['customer_id'],
+        loan_date=datetime.utcnow(),
+        price=game.price
+    )
+    game.quantity -= 1
+
+    try:
+        db.session.add(loan)
+        db.session.commit()
+        return jsonify(loan.to_dict()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/loans/<int:loan_id>/return', methods=['POST'])
 def return_loan(loan_id):
     loan = Loan.query.get_or_404(loan_id)
+
     if loan.return_date:
         return jsonify({'error': 'Loan already returned'}), 400
 
-    loan.return_date = datetime.utcnow()
+    loan.return_date = datetime.now()
     loan.game.quantity += 1
-    db.session.commit()
-    return jsonify(loan.to_dict())
+
+    try:
+        db.session.commit()
+        return jsonify(loan.to_dict()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 
-# Add this new route to your Flask app (app.py)
 @app.route('/api/games/<int:game_id>', methods=['DELETE'])
 def delete_game(game_id):
     # Check if game exists
