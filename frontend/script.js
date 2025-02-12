@@ -72,35 +72,86 @@ function validatePhoneNumber(phone) {
 
 // Game Management
 async function addGame() {
+    // Get all form values
     const title = document.getElementById('game-title').value;
     const publisher = document.getElementById('game-publisher').value;
     const releaseYear = parseInt(document.getElementById('game-year').value);
     const genre = document.getElementById('game-genre').value;
     const price = parseFloat(document.getElementById('game-price').value);
     const quantity = parseInt(document.getElementById('game-quantity').value);
+    const imageUrl = document.getElementById('game-image-url').value;
 
-    // Validate Game Form
+    // Validation checks with specific messages
+    if (!title.trim()) {
+        alert('Title is required');
+        document.getElementById('game-title').focus();
+        return;
+    }
+
+    if (!publisher.trim()) {
+        alert('Publisher is required');
+        document.getElementById('game-publisher').focus();
+        return;
+    }
+
+    if (!releaseYear || isNaN(releaseYear)) {
+        alert('Release year must be a valid number');
+        document.getElementById('game-year').focus();
+        return;
+    }
+
     if (!validateYear(releaseYear)) {
-        alert('Please enter a valid publish year (between 1900 and current year).');
+        alert('Release year must be between 1900 and current year');
+        document.getElementById('game-year').focus();
         return;
     }
 
-    if (!title || !publisher || !genre || !price || !quantity) {
-        alert('Please fill all the fields.');
+    if (!genre) {
+        alert('Please select a genre');
+        document.getElementById('game-genre').focus();
         return;
     }
 
-    const data = {title, publisher, release_year: releaseYear, genre, price, quantity};
+    if (!price || isNaN(price) || price <= 0) {
+        alert('Price must be a valid positive number');
+        document.getElementById('game-price').focus();
+        return;
+    }
+
+    if (!quantity || isNaN(quantity) || quantity < 0) {
+        alert('Quantity must be a valid non-negative number');
+        document.getElementById('game-quantity').focus();
+        return;
+    }
+
+    if (!imageUrl.trim()) {
+        alert('Image URL is required');
+        document.getElementById('game-image-url').focus();
+        return;
+    }
+
+    const data = {
+        title,
+        publisher,
+        release_year: releaseYear,
+        genre,
+        price,
+        quantity,
+        image_url: imageUrl
+    };
 
     try {
         await axios.post(`${API_URL}/games`, data);
         loadGames();
         clearGameForm();
+        alert('Game added successfully!');
     } catch (error) {
-        alert('Error adding game');
+        const errorMessage = error.response?.data?.error || 'Error adding game';
+        alert(errorMessage);
     }
 }
 
+// Helper function for year validation (unchanged)
 function validateYear(year) {
     const currentYear = new Date().getFullYear();
     return year >= 1900 && year <= currentYear;
@@ -143,6 +194,7 @@ function clearGameForm() {
     document.getElementById('game-genre').value = '';
     document.getElementById('game-price').value = '';
     document.getElementById('game-quantity').value = '';
+    document.getElementById('game-image-url').value = '';  // Added clearing image URL
 }
 
 function clearLoanForm() {
@@ -166,14 +218,16 @@ async function loadGames() {
     select.innerHTML = '<option value="">Select Game</option>';
 
     response.data.forEach(game => {
+        // Add to games list
         gamesList.innerHTML += createGameCard(game);
-        if (game.available) {
+
+        // Add to loan selection dropdown if quantity > 0
+        if (game.quantity > 0) {
             select.innerHTML += `<option value="${game.id}">${game.title}</option>`;
         }
     });
 }
 
-// Add this new function to your script.js
 async function deleteGame(gameId) {
     if (!confirm('Are you sure you want to delete this game? This action cannot be undone.')) {
         return;
@@ -192,6 +246,7 @@ async function deleteGame(gameId) {
 function createGameCard(game) {
     return `
         <div class="game-card">
+            <img src="${game.image_url}" alt="${game.title}" class="w-full h-48 object-cover mb-2">
             <h3 class="font-bold">${game.title}</h3>
             <p>Publisher: ${game.publisher}</p>
             <p>Year: ${game.release_year}</p>

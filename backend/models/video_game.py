@@ -2,14 +2,16 @@ from . import db
 
 
 class VideoGame(db.Model):
-    __tablename__ = 'video_game'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    publisher = db.Column(db.String(200), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    publisher = db.Column(db.String(100), nullable=False)
     release_year = db.Column(db.Integer, nullable=False)
     genre = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    quantity = db.Column(db.Integer, nullable=False, default=1)
+    quantity = db.Column(db.Integer, nullable=False)
+    image_url = db.Column(db.String(500), nullable=False)  # Added image_url field
+
+    loans = db.relationship('Loan', cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
@@ -20,5 +22,5 @@ class VideoGame(db.Model):
             'genre': self.genre,
             'price': self.price,
             'quantity': self.quantity,
-            'available': self.quantity > 0
+            'image_url': self.image_url  # Added to dictionary representation
         }
