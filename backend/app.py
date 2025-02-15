@@ -218,4 +218,4 @@ def delete_game(game_id):
 
 if __name__ == '__main__':
     init_app()
-    app.run(debug=True)
+    app.run()

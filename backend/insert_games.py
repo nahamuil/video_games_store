@@ -1,64 +1,121 @@
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
-import pandas as pd
 
-# Load the Excel file containing game data
-games_data = pd.read_excel('games_list.xlsx')
 
-# Set up the ChromeDriver service
-service = Service(executable_path='path_to_chromedriver')
+def setup_driver():
+    chrome_options = Options()
+    service = Service()
+    return webdriver.Chrome(service=service, options=chrome_options)
 
-# Set up Selenium WebDriver
-driver = webdriver.Chrome(service=service)
 
-# Open your site
-driver.get("http://localhost:63342/video_games_store/frontend")
+def interact_with_form():
+    driver = setup_driver()
 
-# Wait for the page to load
-wait = WebDriverWait(driver, 10)
+    try:
+        driver.get(r"C:\user\ofek\PycharmProjects\PythonProject\video_games_store\frontend\index.html")
 
-# Loop through each game in the Excel file and add it to the site
-for index, game in games_data.iterrows():
-    # Click on the "Add Game" button or navigate to the form
-    add_game_button = wait.until(EC.element_to_be_clickable((By.ID, 'add-game-btn')))
-    add_game_button.click()
+        wait = WebDriverWait(driver, 10)
 
-    # Wait for the form to be visible
-    title_input = wait.until(EC.visibility_of_element_located((By.ID, 'game-title')))
-    publisher_input = driver.find_element(By.ID, 'game-publisher')
-    release_year_input = driver.find_element(By.ID, 'game-release-year')
-    genre_input = driver.find_element(By.ID, 'game-genre')
-    price_input = driver.find_element(By.ID, 'game-price')
-    quantity_input = driver.find_element(By.ID, 'game-quantity')
-    image_url_input = driver.find_element(By.ID, 'game-image-url')
+        # Select English language
+        username_field = wait.until(EC.presence_of_element_located((By.ID, "Username")))
+        username_field.send_keys("o")
 
-    # Fill in the game data
-    title_input.clear()
-    title_input.send_keys(game['Title'])
-    publisher_input.clear()
-    publisher_input.send_keys(game['Publisher'])
-    release_year_input.clear()
-    release_year_input.send_keys(str(game['Release Year']))
-    genre_input.clear()
-    genre_input.send_keys(game['Genre'])
-    price_input.clear()
-    price_input.send_keys(str(game['Price']))
-    quantity_input.clear()
-    quantity_input.send_keys(str(game['Quantity']))
-    image_url_input.clear()
-    image_url_input.send_keys(game['Image URL'])
+        password_field = wait.until(EC.presence_of_element_located((By.ID, "Password")))
+        password_field.send_keys("123")
 
-    # Submit the form
-    submit_button = driver.find_element(By.ID, 'submit-game-btn')
-    submit_button.click()
+        wait = WebDriverWait(driver, 1000)
 
-    # Wait a moment before adding the next game
-    time.sleep(2)
+        # Wait for game to load
+        wait.until(EC.presence_of_element_located((By.ID, "bigCookie")))
 
-# Close the browser after all games have been added
-driver.quit()
+        # Enhanced JavaScript clicking implementation with multiple optimizations
+        driver.execute_script("""
+            // Store references to avoid repeated DOM lookups
+            const bigCookie = document.getElementById('bigCookie');
+            const shimmer = document.getElementById('shimmers');
+            const upgrades = document.getElementById('upgrades');
+            const products = document.getElementById('products');
+
+            // Optimization: Use performance.now() for more precise timing
+            let lastUpdate = performance.now();
+            const UPDATE_INTERVAL = 100; // Check upgrades every 100ms
+
+            // Click golden cookies when they appear
+            const clickGolden = () => {
+                if (shimmer && shimmer.firstChild) {
+                    shimmer.firstChild.click();
+                }
+            };
+
+            // Buy available upgrades
+            const buyUpgrades = () => {
+                if (upgrades) {
+                    const upgrade = upgrades.querySelector('.upgrade.enabled');
+                    if (upgrade) upgrade.click();
+                }
+            };
+
+            // Buy available products (buildings)
+            const buyProducts = () => {
+                if (products) {
+                    const buildings = Array.from(products.children).reverse();
+                    for (let building of buildings) {
+                        if (building.classList.contains('enabled')) {
+                            building.click();
+                            break;
+                        }
+                    }
+                }
+            };
+
+            // Main game loop using requestAnimationFrame for optimal performance
+            const gameLoop = () => {
+                // Click cookie as fast as possible
+                bigCookie.click();
+
+                // Check for upgrades and buildings periodically
+                const now = performance.now();
+                if (now - lastUpdate > UPDATE_INTERVAL) {
+                    clickGolden();
+                    buyUpgrades();
+                    buyProducts();
+                    lastUpdate = now;
+                }
+
+                requestAnimationFrame(gameLoop);
+            };
+
+            // Start the game loop
+            requestAnimationFrame(gameLoop);
+
+            // Expose control variable to stop the loop
+            window.isRunning = true;
+        """)
+
+        # Monitor progress with enhanced efficiency
+        cookies_field = driver.find_element(By.ID, "cookies")
+        target = 10000
+
+        while get_cookies_amount(cookies_field.text) < target:
+            time.sleep(0.1)
+
+        # Stop the automation
+        driver.execute_script("window.isRunning = false;")
+
+        print(f"Target of {target} cookies reached!")
+        input("Press Enter to close the browser...")
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+    finally:
+        driver.quit()
+
+
+if __name__ == "__main__":
+    interact_with_form()
